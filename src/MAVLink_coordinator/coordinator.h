@@ -5,23 +5,6 @@
 /* ── Zigbee Configuration ────────────────────────────────── */
 #define MAX_CHILDREN 10
 #define INSTALLCODE_POLICY_ENABLE false
-
-/*
- * FIX 1: Changed from channel 13 (1l << 13) to channel 26 (1l << 26).
- *
- * Zigbee channel 13 (2471 MHz) overlaps heavily with WiFi channel 11,
- * which is the default for most Indian ISP routers (BSNL, Airtel, etc.).
- * Outdoors you encounter far more of these APs, causing interference that
- * prevents the end device from joining ("stuck at network opened").
- *
- * Zigbee channel 26 (2480 MHz) has the least WiFi overlap of all Zigbee
- * channels and is the standard recommendation for outdoor/field deployments.
- *
- * IMPORTANT: Flash both coordinator and end device with this change,
- * then erase NVS on both before powering on, so they renegotiate on
- * the new channel:
- *   idf.py -p <PORT> erase-flash   (or just erase the NVS partition)
- */
 #define ESP_ZB_PRIMARY_CHANNEL_MASK (1l << 26)
 
 #define ESP_ZB_GATEWAY_ENDPOINT     1
@@ -40,18 +23,6 @@
 #define CUSTOM_CLUSTER_ID        0xFF00
 #define CUSTOM_ATTR_JSON_ID      0x0001
 
-/*
- * FIX 2: Reduced from 200 to 128 bytes.
- *
- * The previous worst-case JSON (~190 bytes) was dangerously close to the
- * APS frame MTU. On marginal links (corridors, weak RSSI) large frames
- * are dropped silently, causing intermittent disconnection at short range.
- *
- * The new compact JSON format (short keys a/o/e/s/c/h/n/d/f/t) produces
- * a worst-case payload of ~130 bytes, well within safe APS frame limits.
- *
- * Keep this in sync with end_device.h.
- */
 #define CUSTOM_JSON_MAX_LEN      128
 
 /* ── Disable WiFi for this project ──────────────────────── */
