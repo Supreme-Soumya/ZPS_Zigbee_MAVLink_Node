@@ -19,9 +19,7 @@ static const char *TAG = "GPS_READER";
 static gps_snapshot_t    s_snap  = {0};
 static SemaphoreHandle_t s_mutex = NULL;
 
-/* ═══════════════════════════════════════════════════════════
- *  HMC5883L helpers
- * ═══════════════════════════════════════════════════════════ */
+/*  HMC5883L helpers */
 #define HMC_REG_CFG_A   0x00
 #define HMC_REG_CFG_B   0x01
 #define HMC_REG_MODE    0x02
@@ -88,9 +86,7 @@ static float compass_read_heading(void)
     return heading;
 }
 
-/* ═══════════════════════════════════════════════════════════
- *  NMEA helpers
- * ═══════════════════════════════════════════════════════════ */
+/*  NMEA helpers */
 
 static int nmea_split(char *sentence, char *fields[], int max_fields)
 {
@@ -185,9 +181,7 @@ static void nmea_process_line(char *line, gps_snapshot_t *s)
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
- *  Background reader task
- * ═══════════════════════════════════════════════════════════ */
+/* Background reader task */
 static void gps_reader_task(void *arg)
 {
     uint32_t byte_count = 0;
@@ -244,9 +238,7 @@ static void gps_reader_task(void *arg)
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
- *  Public API
- * ═══════════════════════════════════════════════════════════ */
+/* Public API */
 void gps_reader_init(void)
 {
     s_mutex = xSemaphoreCreateMutex();
