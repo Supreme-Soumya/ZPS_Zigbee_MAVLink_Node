@@ -1,15 +1,9 @@
 /*
  * end_device.c — Zigbee End Device
  *
- * CHANGES FROM ORIGINAL:
- *
- * 1. send_value_cb(): snprintf format uses compact single-character JSON
- *    keys (a/o/e/s/c/h/n/d/f/t) instead of full words.
- *    Worst-case payload drops from ~190 bytes to ~131 bytes, keeping it
- *    safely within APS frame limits even on weak links (corridors, low RSSI).
- *
- * 2. All other logic (NVS handling, steering retry, scheduler alarm,
- *    esp_zb_bdb_dev_joined() guard) is unchanged from your version.
+ * send_value_cb(): snprintf format uses compact single-character JSON
+ * keys (a/o/e/s/c/h/n/d/f/t) instead of full words.
+ *    
  */
 
 #include <stdlib.h>
@@ -96,9 +90,6 @@ static void send_value_cb(uint8_t param)
     mavlink_reader_get(&gps);
 
     /* ── 2. Build compact JSON into ZCL string buffer ────────
-     *
-     * FIX: Compact single-character key names reduce worst-case
-     * payload from ~190 bytes to ~131 bytes.
      *
      * Key mapping (must match coordinator.c parse_and_log_gps_json):
      *   a = lat       o = lon       e = alt (elevation)
