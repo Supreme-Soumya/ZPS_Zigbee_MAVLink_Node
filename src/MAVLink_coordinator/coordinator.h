@@ -23,7 +23,7 @@
 #define CUSTOM_CLUSTER_ID        0xFF00
 #define CUSTOM_ATTR_JSON_ID      0x0001
 
-#define CUSTOM_JSON_MAX_LEN      128
+#define CUSTOM_JSON_MAX_LEN      140
 
 /* ── Disable WiFi for this project ──────────────────────── */
 #undef  CONFIG_EXAMPLE_CONNECT_WIFI
