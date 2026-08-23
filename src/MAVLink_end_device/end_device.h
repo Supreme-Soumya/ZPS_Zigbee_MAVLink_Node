@@ -6,18 +6,6 @@
 #define MAX_CHILDREN 10
 #define INSTALLCODE_POLICY_ENABLE false
 
-/*
- * FIX 1: Changed from channel 13 (1l << 13) to channel 26 (1l << 26).
- *
- * Zigbee channel 13 (2471 MHz) overlaps heavily with WiFi channel 11,
- * the default for most Indian ISP routers. Outdoors you encounter many
- * more such APs, which prevents the end device joining ("stuck at
- * network opened"). Channel 26 (2480 MHz) has the least WiFi overlap
- * and is the standard recommendation for outdoor/field use.
- *
- * Must match coordinator.h exactly. Erase NVS on both devices after
- * flashing so they renegotiate on the new channel.
- */
 #define ESP_ZB_PRIMARY_CHANNEL_MASK  (1l << 26)
 
 #define ESP_ZB_GATEWAY_ENDPOINT      1
@@ -36,32 +24,10 @@
 #define CUSTOM_CLUSTER_ID      0xFF00
 #define CUSTOM_ATTR_JSON_ID    0x0001
 
-/*
- * FIX 2: Reduced from 200 to 128 bytes.
- *
- * The old worst-case JSON (~190 bytes) sat dangerously close to the APS
- * frame MTU. On marginal links (corridors, weak RSSI) large APS frames
- * are silently dropped, causing the short-range disconnection you saw.
- *
- * The new compact format uses single-character keys:
- *   a=lat  o=lon  e=alt  s=speed  c=course  h=heading
- *   n=sats  d=hdop  f=fix  t=utc
- *
- * Worst-case example (128 chars including null):
- *   {"a":22.572646,"o":88.363895,"e":1234.5,"s":120.3,
- *    "c":275.1,"h":276.0,"n":12,"d":1.20,"f":1,
- *    "t":"2024-07-15T08:30:00"}
- *   → ~131 chars — fits comfortably within safe APS limits.
- *
- * Keep in sync with coordinator.h.
- */
 #define CUSTOM_JSON_MAX_LEN    140   /* 131 worst-case + 9 headroom */
 
 /* ── Zigbee stack macros ──────────────────────────────────── */
-/*
- * End device role (was ROUTER in earlier buggy version — already fixed
- * in the version you sent; keeping the comment for reference).
- */
+
 #define ESP_ZB_ZED_CONFIG() \
     { \
         .esp_zb_role         = ESP_ZB_DEVICE_TYPE_ED, \
