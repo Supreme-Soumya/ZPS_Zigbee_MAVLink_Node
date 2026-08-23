@@ -304,9 +304,7 @@ static void process_byte(uint8_t byte, mavlink_parser_t *p)
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
- * Background reader task
- * ═══════════════════════════════════════════════════════════ */
+/* Background reader task */
 static void mavlink_reader_task(void *arg)
 {
     mavlink_parser_t parser = {0};   /* persistent state for this task */
@@ -324,9 +322,7 @@ static void mavlink_reader_task(void *arg)
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
- * Public API
- * ═══════════════════════════════════════════════════════════ */
+/* Public API */
 void mavlink_reader_init(void)
 {
     s_mutex = xSemaphoreCreateMutex();
