@@ -24,10 +24,8 @@ If you tried to make a project with zigbee outside the built-in examples from ar
 
 ### Block Diagram
 <p align="center">
-  <img src="photos/Block_Diagram.png" width="400">
+  <img src="documentations/Block_Diagram.png" width="400">
 </p>
-
-> placeholder
 
 ---
 
