@@ -11,18 +11,6 @@
  *   #33 GLOBAL_POSITION_INT → lat, lon, alt, heading
  *   #74 VFR_HUD             → groundspeed, heading (fallback)
  *
- * FIX (vs original): The parser state machine (process_byte) previously
- * used static local variables for its state, but was called with a local
- * copy `tmp` of the snapshot inside the task loop. This meant the parser
- * state advanced (consumed bytes) but wrote into a `tmp` that was then
- * discarded when the mutex was released on the next iteration boundary —
- * potentially losing partial-frame state under certain scheduling scenarios.
- *
- * Fix: parser state is now a separate persistent struct (mavlink_parser_t)
- * that lives for the lifetime of the task, completely decoupled from the
- * gps_snapshot_t. The snapshot is updated only on a complete, CRC-valid
- * frame via dispatch_frame(), which takes s_snap directly under the mutex.
- * This makes the data flow explicit and race-free.
  */
 
 #include <stdio.h>
@@ -41,9 +29,7 @@ static const char *TAG = "MAV_READER";
 static gps_snapshot_t   s_snap  = {0};
 static SemaphoreHandle_t s_mutex = NULL;
 
-/* ═══════════════════════════════════════════════════════════
- * MAVLink v1 frame constants
- * ═══════════════════════════════════════════════════════════ */
+/*  MAVLink v1 frame constants */
 #define MAVLINK_STX         0xFE
 #define MAVLINK_HDR_LEN     6
 #define MAVLINK_CRC_LEN     2
@@ -91,9 +77,7 @@ static inline float    le_f32(const uint8_t *p) {
     float f; memcpy(&f, p, 4); return f;
 }
 
-/* ═══════════════════════════════════════════════════════════
- * Message parsers — write directly into s_snap under mutex
- * ═══════════════════════════════════════════════════════════ */
+/* Message parsers — write directly into s_snap under mutex */
 
 /* #2 SYSTEM_TIME */
 static void parse_system_time(const uint8_t *payload)
@@ -199,9 +183,7 @@ static void parse_vfr_hud(const uint8_t *payload)
     xSemaphoreGive(s_mutex);
 }
 
-/* ═══════════════════════════════════════════════════════════
- * Frame dispatcher
- * ═══════════════════════════════════════════════════════════ */
+/* Frame dispatcher */
 static void dispatch_frame(uint8_t msg_id, const uint8_t *payload)
 {
     switch (msg_id) {
