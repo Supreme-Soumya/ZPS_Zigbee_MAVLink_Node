@@ -1,18 +1,3 @@
-/*
- * coordinator.c — Zigbee Coordinator
- *
- * Receives compact GPS JSON from the end device and parses every field.
- *
- * CHANGES FROM ORIGINAL:
- *   - parse_and_log_gps_json() updated to match the new compact key names
- *     sent by end_device.c (a/o/e/s/c/h/n/d/f/t instead of full words).
- *     The sscanf format string is updated accordingly.
- *   - CUSTOM_JSON_MAX_LEN is now 128 (via coordinator.h) — kept in sync
- *     with end_device.h.
- *   - Channel mask changed to (1l << 26) in coordinator.h.
- *   - All other logic is identical to the original.
- */
-
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
@@ -111,22 +96,7 @@ void esp_zb_app_signal_handler(esp_zb_app_signal_t *signal_struct)
     }
 }
 
-/* ── GPS JSON parser ─────────────────────────────────────────
- *
- * FIX: Updated to parse the new compact JSON format sent by end_device.c.
- *
- * New compact format (worst-case ~130 bytes, down from ~190):
- *   {"a":22.572646,"o":88.363895,"e":5.1,"s":0.0,
- *    "c":0.0,"h":276.3,"n":8,"d":1.20,"f":1,"t":"2024-07-15T08:30:00"}
- *
- * Key mapping:
- *   a = lat      o = lon      e = alt      s = speed
- *   c = course   h = heading  n = satellites  d = hdop
- *   f = fix      t = utc
- *
- * Uses sscanf — safe because the format is fixed and produced by our
- * own snprintf in end_device.c.
- * ─────────────────────────────────────────────────────────── */
+/* ── GPS JSON parser ───────────────────────────────────────── */
 static void parse_and_log_gps_json(const char *json)
 {
     double lat = 0, lon = 0;
@@ -155,7 +125,7 @@ static void parse_and_log_gps_json(const char *json)
         return;
     }
 
-    /* Pretty-print all fields — same as before */
+    /* Pretty-print all fields  */
     ESP_LOGI(TAG, "┌─── GPS Update ──────────────────────────");
     ESP_LOGI(TAG, "│ Fix valid   : %s",          fix ? "YES" : "NO (waiting)");
     ESP_LOGI(TAG, "│ UTC         : %s",          utc[0] ? utc : "—");
