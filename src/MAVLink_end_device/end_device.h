@@ -24,7 +24,7 @@
 #define CUSTOM_CLUSTER_ID      0xFF00
 #define CUSTOM_ATTR_JSON_ID    0x0001
 
-#define CUSTOM_JSON_MAX_LEN    140   /* 131 worst-case + 9 headroom */
+#define CUSTOM_JSON_MAX_LEN    140   
 
 /* ── Zigbee stack macros ──────────────────────────────────── */
 
